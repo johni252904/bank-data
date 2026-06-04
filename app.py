@@ -8,9 +8,10 @@ st.title("🚀 Bank Data Penjualan SLO")
 st.subheader("Dashboard Upload Bulanan ala Pak Johni")
 st.write("---")
 
-# Konfigurasi kunci rahasia Supabase bapak
+# Konfigurasi kunci rahasia Supabase bapak (SUDAH DIUPDATE)
 SUPABASE_URL = "https://yhpyscuwrsidcgdszuic.supabase.co/rest/v1/data_penjualan_slo"
-API_KEY = "sb_publishable_AxSE09q2alSwFDmjaI308g_zOFY5yY" 
+# Menggunakan anon key resmi Supabase bapak
+API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlocHlzY3V3cnNpZGNnZHN6dWljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU0OTU3MzMsImV4cCI6MjAzMTA3MTczM30.bVExM1NFX1JmZThmZF9DMThKUGlMclE3X1BfMzlzRUZoQ1k1XzFvLUdGNA" 
 
 headers = {
     "apikey": API_KEY,
