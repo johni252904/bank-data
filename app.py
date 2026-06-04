@@ -8,7 +8,7 @@ st.title("🚀 Bank Data Penjualan SLO")
 st.subheader("Dashboard Upload Bulanan ala Pak Johni")
 st.write("---")
 
-# Mengambil kunci rahasia dari kotak aman Streamlit Secrets
+# Mengambil otomatis kunci rahasia dari kotak Secrets yang Pak Johni save tadi
 SUPABASE_URL = "https://yhpyscuwrsidcgdszuic.supabase.co/rest/v1/data_penjualan_slo"
 API_KEY = st.secrets["SUPABASE_KEY"]
 
