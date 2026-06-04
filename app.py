@@ -37,6 +37,11 @@ if uploaded_file is not None:
                 # Memastikan nama kolom di excel bapak huruf kecil semua agar cocok dengan database
                 df.columns = [c.lower() for c in df.columns]
                 
+                # JALUR AMAN: Mengubah semua kolom tanggal/waktu menjadi teks biasa agar tidak eror JSON
+                for col in df.columns:
+                    if pd.api.types.is_datetime64_any_dtype(df[col]) or 'tanggal' in col:
+                        df[col] = df[col].astype(str)
+                
                 # Mengubah dataframe menjadi struktur data JSON
                 data_json = df.to_dict(orient="records")
                 
