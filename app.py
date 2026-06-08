@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import os
 
 # 1. KONFIGURASI HALAMAN MEWAH & MELEBAR
 st.set_page_config(layout="wide", page_title="DASHBOARD SALES PPM")
@@ -51,15 +52,24 @@ def singkat_uang(angka):
 
 # 2. HEADER
 st.title("🚀 DASHBOARD SALES PPM")
-st.write("Command Center Sales & Geospatial Radar v1.0 — Powered by Pak Johni.")
+st.write("Command Center Sales & Geospatial Radar v4.0 (AUTOPILOT MOD) — Powered by Pak Johni.")
 st.markdown("---")
 
-# 3. Tombol Upload Data Excel
-uploaded_file = st.file_uploader("📥 Masukkan file Excel MASTER DATA bapak di sini", type=["xlsx"])
+# Nama file Excel bapak yang ada di GitHub
+NAMA_FILE_DATA = "MASTER_DATA_SLI_AUTOPILOT_REAL.xlsx"
 
-if uploaded_file is not None:
-    df_mentah = pd.read_excel(uploaded_file)
+# 3. SISTEM DETEKSI DATA OTOMATIS (AUTOPILOT)
+if os.path.exists(NAMA_FILE_DATA):
+    df_mentah = pd.read_excel(NAMA_FILE_DATA)
     
+    # BONUS: Tetap kasih tombol opsional di bawah kalau bapak atau tim sewaktu-waktu mau upload file cadangan lain
+    with st.sidebar:
+        st.markdown("### ⚙️ Mode Admin")
+        file_cadangan = st.file_uploader("🔄 Timpa data dengan Excel lain (opsional):", type=["xlsx"])
+        if file_cadangan is not None:
+            df_mentah = pd.read_excel(file_cadangan)
+            st.success("Data berhasil ditimpa sementara!")
+
     # 4. FILTER BRAND
     st.subheader("🎯 Filter Tampilan Brand:")
     if "BRAND" in df_mentah.columns:
@@ -201,3 +211,6 @@ if uploaded_file is not None:
     if "BULAN" in df.columns and "REGION" in df.columns:
         pivot_df = df.pivot_table(index="BULAN", columns="REGION", values=pilihan_y, aggfunc="sum", margins=True, margins_name="TOTAL")
         st.dataframe(pivot_df.style.format("Rp {:,.0f}"), use_container_width=True)
+
+else:
+    st.error(f"🔴 File database utama '{NAMA_FILE_DATA}' tidak ditemukan di server GitHub bapak. Silakan periksa kembali penulisan nama file-nya.")
