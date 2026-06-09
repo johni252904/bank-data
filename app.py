@@ -52,7 +52,7 @@ def singkat_uang(angka):
 
 # 2. HEADER
 st.title("🚀 DASHBOARD SALES PPM")
-st.write("Command Center Sales & Geospatial Radar v4.0 (AUTOPILOT MOD) — Powered by Pak Johni.")
+st.write("Command Center Sales & Geospatial Radar v5.0 (ULTIMATE PRO) — Powered by Pak Johni.")
 st.markdown("---")
 
 # Nama file Excel bapak yang ada di GitHub
@@ -62,7 +62,7 @@ NAMA_FILE_DATA = "MASTER_DATA_SLI_AUTOPILOT_REAL.xlsx"
 if os.path.exists(NAMA_FILE_DATA):
     df_mentah = pd.read_excel(NAMA_FILE_DATA)
     
-    # BONUS: Tetap kasih tombol opsional di bawah kalau bapak atau tim sewaktu-waktu mau upload file cadangan lain
+    # Mode Admin di Sidebar
     with st.sidebar:
         st.markdown("### ⚙️ Mode Admin")
         file_cadangan = st.file_uploader("🔄 Timpa data dengan Excel lain (opsional):", type=["xlsx"])
@@ -92,9 +92,20 @@ if os.path.exists(NAMA_FILE_DATA):
 
     kolom_keuangan = [col for col in df.columns if 'ACTUAL' in col or 'TARGET' in col]
     
-    # 5. Pilihan Sumbu Y Finansial
-    st.subheader("📊 Pilih Indikator Keuangan:")
-    pilihan_y = st.selectbox("Data Sumbu Y / Ukuran Radar Peta:", kolom_keuangan)
+    st.markdown("---")
+    
+    # 5. FITUR INVESTOR KELAS KAKAP: DUAL PANEL KEMUDI GRAFIK (X & Y)
+    st.subheader("🎛️ Panel Kontrol Analisis Grafik")
+    kolom_ctrl1, kolom_ctrl2 = st.columns(2)
+    
+    with kolom_ctrl1:
+        pilihan_y = st.selectbox("📊 Data Sumbu Y (Ukuran Nilai Uang):", kolom_keuangan)
+        
+    with kolom_ctrl2:
+        # DI SINI RAHASIANYA! Bapak sekarang bisa pilih mau bedah data per apa di Sumbu X!
+        opsi_x = {"🗓️ Berdasarkan Bulan": "BULAN", "🏷️ Berdasarkan Brand": "BRAND", "📍 Berdasarkan Region": "REGION"}
+        pilihan_x_label = st.selectbox("📐 Data Sumbu X (Pengelompokan Grafik Batang):", list(opsi_x.keys()))
+        pilihan_x = opsi_x[pilihan_x_label]
 
     st.markdown("---")
 
@@ -123,7 +134,6 @@ if os.path.exists(NAMA_FILE_DATA):
     daftar_region_ada = sorted([r for r in df["REGION"].unique() if pd.notna(r)])
     pilihan_peta_region = st.radio("Silakan klik Wilayah untuk dinyalakan di Peta:", daftar_region_ada)
     
-    # Koordinat Pulau Besar Indonesia
     koordinat_map = {
         'SUMATRA': {'lat': [-1, 2, -3, -5], 'lon': [102, 99, 104, 105], 'reg': 'WEST'},
         'JAWA': {'lat': [-6.5, -7, -7.5], 'lon': [107, 110, 112], 'reg': 'HO'},
@@ -170,12 +180,12 @@ if os.path.exists(NAMA_FILE_DATA):
 
     st.markdown("---")
     
-    # 8. GRAFIK TREN BULANAN ANTI-PECAH
-    st.subheader("📊 Grafik Tren Bulanan")
-    if "BULAN" in df.columns and "REGION" in df.columns:
-        df_rangkum = df.groupby(["BULAN", "REGION"], as_index=False)[pilihan_y].sum()
+    # 8. GRAFIK TREN INTERAKTIF DUA KEMUDI (X & Y MUTABEL)
+    st.subheader(f"📊 Grafik Analisis Fleksibel: {pilihan_x_label}")
+    if pilihan_x in df.columns and "REGION" in df.columns:
+        df_rangkum = df.groupby([pilihan_x, "REGION"], as_index=False)[pilihan_y].sum()
         peta_warna_neon = {'CENTRAL': '#00bfff', 'EAST': '#39ff14', 'HO': '#ff3333', 'WEST': '#ffff00'}
-        fig_bar = px.bar(df_rangkum, x="BULAN", y=pilihan_y, color="REGION", barmode="group", color_discrete_map=peta_warna_neon, template="plotly_dark")
+        fig_bar = px.bar(df_rangkum, x=pilihan_x, y=pilihan_y, color="REGION", barmode="group", color_discrete_map=peta_warna_neon, template="plotly_dark")
         fig_bar.update_layout(plot_bgcolor='#0d0d0d', paper_bgcolor='#0d0d0d', font=dict(color='#ffffff'))
         st.plotly_chart(fig_bar, use_container_width=True)
     
@@ -206,11 +216,11 @@ if os.path.exists(NAMA_FILE_DATA):
 
     st.markdown("---")
 
-    # 10. TABEL MATRIX DETAIL
-    st.subheader("📋 Matrix Finansial Detail")
-    if "BULAN" in df.columns and "REGION" in df.columns:
-        pivot_df = df.pivot_table(index="BULAN", columns="REGION", values=pilihan_y, aggfunc="sum", margins=True, margins_name="TOTAL")
+    # 10. TABEL MATRIX DETAIL DYNAMIC
+    st.subheader(f"📋 Matrix Detail Dynamic ({pilihan_x_label})")
+    if pilihan_x in df.columns and "REGION" in df.columns:
+        pivot_df = df.pivot_table(index=pilihan_x, columns="REGION", values=pilihan_y, aggfunc="sum", margins=True, margins_name="TOTAL")
         st.dataframe(pivot_df.style.format("Rp {:,.0f}"), use_container_width=True)
 
 else:
-    st.error(f"🔴 File database utama '{NAMA_FILE_DATA}' tidak ditemukan di server GitHub bapak. Silakan periksa kembali penulisan nama file-nya.")
+    st.error(f"🔴 File database utama '{NAMA_FILE_DATA}' tidak ditemukan di server GitHub bapak.")
